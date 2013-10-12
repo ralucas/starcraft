@@ -78,15 +78,31 @@ $(function(){
 	};
 
 	//split array for pagination
-	//question: how will this work on remainder sets
 	var splitArray = function (arr, count){
 		var newArray = [];
-		if(arr.length > count){
-			var totArrays = Math.floor(arr.length/count)
+		var totArrays = 0;
+		var sub = count - (arr.length%count);
+		if(arr.length <= count){
+			return arr;
+		}
+		else{
+			if(arr.length%count === 0){
+				totArrays = Math.floor(arr.length/count);
+			}
+			else{
+				totArrays = Math.floor(arr.length/count) + 1;
+			}
 			for(var i = 0; i < totArrays; i++){
-				var l = count*(i+1);
+				var l = 0;
+				if(i < totArrays - 1){
+					l = count*(i+1);
+				}
+				else{
+					l = (count*(i+1)) - sub;
+				}
+				var k = (count*i);
 				newArray[i] = [];
-				for(var j = 0; j < l; j++){
+				for(var j = k; j < l; j++){
 					newArray[i].push(arr[j]);
 				}
 			}
@@ -211,10 +227,17 @@ $(function(){
 	});
 	
 	//paginate
-	var qtyPerPage = 20;
+	var qtyPerPage = 21;
 	var numItems = $('.table-data tr').length;
-	var pages = Math.floor(numItems/qtyPerPage);
+	var pages = Math.round(numItems/qtyPerPage);
 
+	console.log(pages);
+	//need to put each page number on it dynamically
+	('.pagination').append(Createable.create(['ul', [
+		['li a', {href: '#'}, '&laquo;'],
+		['li a', {href: x}, x],
+		['li a', {href: '#'}, '&raquo;']
+		]]));
 	//split up array and then do appendData
 
 	// if(numItems > qtyPerPage){
