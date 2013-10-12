@@ -39,8 +39,37 @@
                 </div>
 
                 <div class='table-div col-md-8 col-md-offset-2'>
-                    <h3>Individual Rankings</h3>
+                    <h3 class='ind-rank'>Individual Rankings</h3>
+                    <p class='filter-click'>Click here to filter the data</p>
+                    <div class='filter-buttons'>
+                        
+                        <button type="button" class="btn btn-default btn-xs search-filter">Search by User or Name</button>
+
+                        <div class="btn-group region-filter">
+                            <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Region<span class="caret"></span></button>
+                            <ul class="dropdown-menu regions-dd" form='menu'></ul>
+                        </div>
+
+                        <div class="btn-group race-filter">
+                            <button class="btn btn-default btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Race<span class="caret"></span></button>
+                            <ul class="dropdown-menu race-dd"></ul>
+                        </div>
+
+                    </div>
+
+                    <div class='row search-input'>
+                        <div class="col-md-10 col-md-offset-1">
+                        <div class="input-group input-group-sm">
+                            <input id='search-value' type="text" class="form-control">
+                            <span class="input-group-btn">
+                            <button class="btn btn-default srch-btn" type="button">Search by Full Name</button>
+                            </span>
+                        </div>
+                        </div>
+                    </div>
+
                     <p>Click on headers to sort by that criteria</p>
+                    <button type="button" class="btn btn-default btn-xs reset">Reset Filter</button>
                     <table class='table table-hover'>
                         <thead class='table-head'><tr></tr></thead>
                         <tbody class='table-data'></tbody>

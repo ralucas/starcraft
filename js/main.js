@@ -67,6 +67,51 @@ $(function(){
 
 	var mostPopRace = racePopFunc(racePop);
 
+	//filter function
+	var f = function (arr, index, value){
+		var filtered = [];
+		for(var i = 0; i < arr.length; i++){
+			if(value === arr[i][index])
+				filtered.push(arr[i]);
+		}
+		return filtered;
+	};
+
+	//split array for pagination
+	//question: how will this work on remainder sets
+	var splitArray = function (arr, count){
+		var newArray = [];
+		if(arr.length > count){
+			var totArrays = Math.floor(arr.length/count)
+			for(var i = 0; i < totArrays; i++){
+				var l = count*(i+1);
+				newArray[i] = [];
+				for(var j = 0; j < l; j++){
+					newArray[i].push(arr[j]);
+				}
+			}
+		}
+		return newArray;
+	};
+
+	//Regions filters
+	var regionsArr = _.pluck(sortRegion, 2);
+	var regionsUniq = _.uniq(regionsArr);
+	var buildRegions = function(x){
+		return ['li', [
+		['a', {href: x.url }, x]
+		]];
+	};
+	
+	//Race filters
+	var raceArr = _.pluck(sortRace, 3);
+	var raceUniq = _.uniq(raceArr);
+	var buildRaces = function(x){
+		return ['li', [
+		['a', {href: x.url }, x]
+		]];
+	};
+
 	//creates overall stats
 	$('.stats-data').append(Creatable.create(['tr', [
 		['td', totPlayers],
@@ -112,12 +157,57 @@ $(function(){
 		});
 	});
 
-	//filter
-	$('button').on('click', function(){
-		var filter = $('input').val();
-		$('.table-data').empty();
-		$('tr:contains('+filter+')').append(
-			);
+	//filter buttons
+	$('.filter-click').on('click', function(){
+		$('.filter-click').css('display', 'none');
+		$('.filter-buttons').css('display','block');
+	});
+
+	$('.search-filter').on('click', function(){
+		$('.filter-buttons').css('display','none');
+		$('.search-input').css('display', 'block');
+	});
+	
+	$('.srch-btn').on('click', function(){
+		$('.search-input').css('display', 'none');
+		$('.filter-click').css('display', 'block');
+	});
+
+	//filter region
+	$('.regions-dd').append(Creatable.create(
+		_.map(regionsUniq, buildRegions)));
+
+	$('.region-filter').on('click', 'li', function(){
+		var regionPicked = $(this).text();
+		$(this).parent().prev().text('Region: '+regionPicked+' ').append('<span class="caret"></span>');
+		var regionsFiltered = f(starcraftObj.data, 2, regionPicked);
+		appendData(regionsFiltered);
+	});
+
+	//filter race
+	$('.race-dd').append(Creatable.create(
+		_.map(raceUniq, buildRaces)));
+
+	$('.race-filter').on('click', 'li', function(){
+		var racePicked = $(this).text();
+		$(this).parent().prev().text('Race: '+racePicked+' ').append('<span class="caret"></span>');
+		var racesFiltered = f(starcraftObj.data, 3, racePicked);
+		appendData(racesFiltered);
+	});
+
+	//search filter
+	$('.srch-btn').on('click', function(){
+		var searchVal = $('#search-value').val();
+		var usersFiltered = f(starcraftObj.data, 1, searchVal);
+		appendData(usersFiltered);
+	});
+
+	//reset button
+	$('.reset').on('click', function(){
+		appendData(starcraftObj.data);
+		$('.search-input').css('display', 'none');
+		$('.filter-buttons').css('display','none');
+		$('.filter-click').css('display', 'block');
 	});
 	
 	//paginate
@@ -125,8 +215,12 @@ $(function(){
 	var numItems = $('.table-data tr').length;
 	var pages = Math.floor(numItems/qtyPerPage);
 
+	//split up array and then do appendData
 
-	//$('.table-data').children().css('display', 'none');
-
-
+	// if(numItems > qtyPerPage){
+	// 	var splits = splitArray(starcraftObj.data, qtyPerPage);
+	// 	for(var i = 0; i < splits.length; i++){
+	// 		appendData(splits[i]) //to each page
+	// 	}
+	// }
 });

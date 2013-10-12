@@ -39,3 +39,22 @@ th, p{
     color: blue;
     cursor: pointer;
 }
+
+.filter-click:hover{
+	cursor: pointer;
+	color: blue;
+}
+
+.search-input{
+	display: none;
+	margin-bottom: 1%;
+}
+
+.filter-buttons{
+	display: none;
+	margin: 1%;
+}
+
+li:hover {
+	cursor: pointer;
+}
