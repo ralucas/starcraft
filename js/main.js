@@ -195,25 +195,28 @@ $(function(){
 	// 	}
 	// }
 
-	var qtyPerPage = 20;
 
 	//appends data to table
 	var appendData = function(arr){
 		$('.table-data').empty();
-
+		var qtyPerPage = 20;
 		var numItems = arr.length;
 		var pages = Math.round(numItems/qtyPerPage);
 		paginator(pages);
-
-		for(var i = 0; i < arr.length; i++){
-			$('.table-data').append(Creatable.create(['tr', [
-				['td', arr[i][0]],
-				['td', arr[i][1]],
-				['td', arr[i][2]],
-				['td', arr[i][3]],
-				['td', arr[i][4]],
-				['td', arr[i][5]]
-			]]));
+		if(numItems > qtyPerPage){
+			start = 0;
+			qty = start + qtyPerPage;
+			for(var i = start; i < qty; i++){
+				$('.table-data').append(Creatable.create(['tr', [
+					['td', arr[i][0]],
+					['td', arr[i][1]],
+					['td', arr[i][2]],
+					['td', arr[i][3]],
+					['td', arr[i][4]],
+					['td', arr[i][5]]
+				]]));
+				i = start;
+			}
 		}
 	};
 
