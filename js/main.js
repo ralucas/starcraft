@@ -1,5 +1,7 @@
 $(function(){
 
+	//Sorting
+
 	//sorts by username
 	var sortUser = {};
 	sortUser = _.sortBy(starcraftObj.data, function(arr){
@@ -42,6 +44,10 @@ $(function(){
 		arr[0] = newName;
 	});
 
+	//////
+	//data for the overall stats
+	/////
+
 	//total num of players
 	var totPlayers = _.size(starcraftObj.data);
 
@@ -67,12 +73,25 @@ $(function(){
 
 	var mostPopRace = racePopFunc(racePop);
 
+
 	//filter function
-	var f = function (arr, index, value){
+	var filterDeep = function (arr, value, index){
 		var filtered = [];
 		for(var i = 0; i < arr.length; i++){
 			if(value === arr[i][index])
 				filtered.push(arr[i]);
+		}
+		return filtered;
+	};
+
+	//search function
+	var search = function (arr, value, index){
+		var re = new RegExp(value, 'gi');
+		var filtered = [];
+		for(var i = 0; i < arr.length; i++){
+			if(arr[i][index].match(re)){
+				filtered.push(arr[i]);
+			}
 		}
 		return filtered;
 	};
@@ -143,10 +162,49 @@ $(function(){
 			);
 		}
 	};
-		
+
+	//build page numbers
+	var paginator = function(qty){
+		$('.page').empty();
+		if(qty > 1){
+			for(var i = 1; i <= qty; i++){
+				$('.right-arrow').before(Creatable.create([
+				['li.page a', {href: '#'}, i],
+				]));
+			}
+		}
+		else{
+			$('.pagination').css('display', 'none');
+		}
+	};
+
+	// if(numItems > qtyPerPage){
+
+	// }
+
+	// //need to put each page number on it dynamically
+	// var paginate = function(arr){
+	
+	// }
+	// //split up array and then do appendData
+
+	// if(numItems > qtyPerPage){
+	// 	var splits = splitArray(starcraftObj.data, qtyPerPage);
+	// 	for(var i = 0; i < splits.length; i++){
+	// 		appendData(splits[i]) //to each page
+	// 	}
+	// }
+
+	var qtyPerPage = 20;
+
 	//appends data to table
 	var appendData = function(arr){
 		$('.table-data').empty();
+
+		var numItems = arr.length;
+		var pages = Math.round(numItems/qtyPerPage);
+		paginator(pages);
+
 		for(var i = 0; i < arr.length; i++){
 			$('.table-data').append(Creatable.create(['tr', [
 				['td', arr[i][0]],
@@ -196,7 +254,7 @@ $(function(){
 	$('.region-filter').on('click', 'li', function(){
 		var regionPicked = $(this).text();
 		$(this).parent().prev().text('Region: '+regionPicked+' ').append('<span class="caret"></span>');
-		var regionsFiltered = f(starcraftObj.data, 2, regionPicked);
+		var regionsFiltered = filterDeep(starcraftObj.data, regionPicked, 2);
 		appendData(regionsFiltered);
 	});
 
@@ -207,15 +265,17 @@ $(function(){
 	$('.race-filter').on('click', 'li', function(){
 		var racePicked = $(this).text();
 		$(this).parent().prev().text('Race: '+racePicked+' ').append('<span class="caret"></span>');
-		var racesFiltered = f(starcraftObj.data, 3, racePicked);
+		var racesFiltered = filterDeep(starcraftObj.data, racePicked, 3);
 		appendData(racesFiltered);
 	});
 
 	//search filter
 	$('.srch-btn').on('click', function(){
 		var searchVal = $('#search-value').val();
-		var usersFiltered = f(starcraftObj.data, 1, searchVal);
-		appendData(usersFiltered);
+		var usersFiltered = search(starcraftObj.data, searchVal, 0);
+		var fullnFiltered = search(starcraftObj.data, searchVal, 1);
+		var searchFiltered = _.union(usersFiltered, fullnFiltered);
+		appendData(searchFiltered);
 	});
 
 	//reset button
@@ -225,25 +285,4 @@ $(function(){
 		$('.filter-buttons').css('display','none');
 		$('.filter-click').css('display', 'block');
 	});
-	
-	//paginate
-	var qtyPerPage = 21;
-	var numItems = $('.table-data tr').length;
-	var pages = Math.round(numItems/qtyPerPage);
-
-	console.log(pages);
-	//need to put each page number on it dynamically
-	('.pagination').append(Createable.create(['ul', [
-		['li a', {href: '#'}, '&laquo;'],
-		['li a', {href: x}, x],
-		['li a', {href: '#'}, '&raquo;']
-		]]));
-	//split up array and then do appendData
-
-	// if(numItems > qtyPerPage){
-	// 	var splits = splitArray(starcraftObj.data, qtyPerPage);
-	// 	for(var i = 0; i < splits.length; i++){
-	// 		appendData(splits[i]) //to each page
-	// 	}
-	// }
 });
