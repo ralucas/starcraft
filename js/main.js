@@ -169,7 +169,7 @@ $(function(){
 		if(qty > 1){
 			for(var i = 1; i <= qty; i++){
 				$('.right-arrow').before(Creatable.create([
-				['li.page a', {href: '#'}, i],
+				['li.page a', {href: '#', data: i}, i],
 				]));
 			}
 		}
@@ -178,34 +178,26 @@ $(function(){
 		}
 	};
 
-	// if(numItems > qtyPerPage){
-
-	// }
-
-	// //need to put each page number on it dynamically
-	// var paginate = function(arr){
-	
-	// }
-	// //split up array and then do appendData
-
-	// if(numItems > qtyPerPage){
-	// 	var splits = splitArray(starcraftObj.data, qtyPerPage);
-	// 	for(var i = 0; i < splits.length; i++){
-	// 		appendData(splits[i]) //to each page
-	// 	}
-	// }
-
+	var curArr =[];
 
 	//appends data to table
-	var appendData = function(arr){
+	var appendData = function(arr, page){
 		$('.table-data').empty();
+		curArr = arr;
 		var qtyPerPage = 20;
 		var numItems = arr.length;
 		var pages = Math.round(numItems/qtyPerPage);
+		var start = 0;
 		paginator(pages);
-		if(numItems > qtyPerPage){
-			start = 0;
-			qty = start + qtyPerPage;
+			if(page > 0){
+				start = (page-1) * qtyPerPage;
+				qty = start + qtyPerPage;
+			}
+			else if(arguments.length <= 1 && arr.length > qtyPerPage){
+				qty = start + qtyPerPage;
+			}
+			else{qty = arr.length}
+			console.log('qty',qty)
 			for(var i = start; i < qty; i++){
 				$('.table-data').append(Creatable.create(['tr', [
 					['td', arr[i][0]],
@@ -215,14 +207,18 @@ $(function(){
 					['td', arr[i][4]],
 					['td', arr[i][5]]
 				]]));
-				i = start;
 			}
-		}
-	};
+		};
 
 	//renders table data
 	colHeads(starcraftObj.cols);
 	appendData(starcraftObj.data);
+
+	$('.pagination').on('click', 'a', function(){
+		var pageNum = $(this).text();
+		console.log('pagenum', pageNum);
+		appendData(curArr, pageNum);
+	});
 
 	//sort on click event
 	var clickArr = [sortUser, sortName, sortRegion, sortRace, sortWins, sortLosses];
